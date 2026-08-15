@@ -67,30 +67,26 @@ if st.button("🔍 Analyze Authenticity"):
             text_vector = vectorizer.transform([cleaned])
             
             # 3. Model Prediction
+            prediction = lr_model.predict(text_vector)[0]
             probabilities = lr_model.predict_proba(text_vector)[0]
             
-            # Probability indexes: probabilities[0] -> Label 0, probabilities[1] -> Label 1
-            # ගොඩක් TF-IDF Models වල Label 1 = Fake, Label 0 = Real හෝ ඒකෙ අනිත් පැත්ත වෙන්න පුළුවන්.
-            # Confidence score එක වැඩිම Probability එක අනුව ගනිමු:
-            pred_class = np.argmax(probabilities)
-            confidence = probabilities[pred_class] * 100
+            confidence = np.max(probabilities) * 100
 
             st.markdown("---")
             st.subheader("📊 Analysis Results")
             
-            
-            # Probabilities අනුව Real ද Fake ද යන්න හරියටම පෙන්වීමට:
-            if pred_class == 1:
-                st.error(f"🔴 **Prediction:** FAKE NEWS")
+            # Label Mapping (WELFake Dataset: 1 = Real News, 0 = Fake News)
+            if prediction == 1:
+                st.success(f"🟢 **Prediction:** REAL NEWS")
                 st.metric(label="Confidence Score", value=f"{confidence:.2f}%")
             else:
-                st.success(f"🟢 **Prediction:** REAL NEWS")
+                st.error(f"🔴 **Prediction:** FAKE NEWS")
                 st.metric(label="Confidence Score", value=f"{confidence:.2f}%")
 
             # Probability Breakdown Bar
             st.write("**Prediction Probabilities:**")
-            st.progress(int(probabilities[1] * 100), text=f"Fake News Probability: {probabilities[1]*100:.2f}%")
-            st.progress(int(probabilities[0] * 100), text=f"Real News Probability: {probabilities[0]*100:.2f}%")
+            st.progress(int(probabilities[1] * 100), text=f"Real News Probability: {probabilities[1]*100:.2f}%")
+            st.progress(int(probabilities[0] * 100), text=f"Fake News Probability: {probabilities[0]*100:.2f}%")
 
 # Disclaimer Footer
 st.markdown("---")
