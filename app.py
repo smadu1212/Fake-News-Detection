@@ -66,33 +66,28 @@ if st.button("🔍 Analyze Authenticity"):
             # 2. Vectorize
             text_vector = vectorizer.transform([cleaned])
             
-            # 3. Model Prediction
-            prediction = lr_model.predict(text_vector)[0]
+            # 3. Model Prediction Probabilities
             probabilities = lr_model.predict_proba(text_vector)[0]
             
-            # Get class indices dynamically (WELFake: 0 = Fake, 1 = Real)
-            classes = list(lr_model.classes_)
-            fake_idx = classes.index(0) if 0 in classes else 0
-            real_idx = classes.index(1) if 1 in classes else 1
-
-            fake_prob = probabilities[fake_idx]
-            real_prob = probabilities[real_idx]
+            # WELFake Dataset: Index 0 = Fake News, Index 1 = Real News
+            prob_fake = probabilities[0]
+            prob_real = probabilities[1]
 
             st.markdown("---")
             st.subheader("📊 Analysis Results")
             
-            # Prediction Label Output
-            if prediction == 1:
-                st.success(f"🟢 **Prediction:** REAL NEWS")
-                st.metric(label="Confidence Score", value=f"{real_prob * 100:.2f}%")
+            # Decision based on higher probability
+            if prob_fake > prob_real:
+                st.error("🔴 **Prediction:** FAKE NEWS")
+                st.metric(label="Confidence Score", value=f"{prob_fake * 100:.2f}%")
             else:
-                st.error(f"🔴 **Prediction:** FAKE NEWS")
-                st.metric(label="Confidence Score", value=f"{fake_prob * 100:.2f}%")
+                st.success("🟢 **Prediction:** REAL NEWS")
+                st.metric(label="Confidence Score", value=f"{prob_real * 100:.2f}%")
 
-            # Probability Breakdown Progress Bars
+            # Probability Breakdown Bars
             st.write("**Prediction Probabilities:**")
-            st.progress(int(real_prob * 100), text=f"Real News Probability: {real_prob * 100:.2f}%")
-            st.progress(int(fake_prob * 100), text=f"Fake News Probability: {fake_prob * 100:.2f}%")
+            st.progress(int(prob_real * 100), text=f"Real News Probability: {prob_real * 100:.2f}%")
+            st.progress(int(prob_fake * 100), text=f"Fake News Probability: {prob_fake * 100:.2f}%")
 
 # Disclaimer Footer
 st.markdown("---")
