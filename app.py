@@ -69,25 +69,25 @@ if st.button("🔍 Analyze Authenticity"):
             # 3. Model Prediction Probabilities
             probabilities = lr_model.predict_proba(text_vector)[0]
             
-            # WELFake Dataset: Index 0 = Fake News, Index 1 = Real News
-            prob_fake = probabilities[0]
-            prob_real = probabilities[1]
+            # Dataset Mapping: Index 0 = FAKE, Index 1 = REAL (Reverse if model swapped)
+            prob_0 = probabilities[0]
+            prob_1 = probabilities[1]
 
             st.markdown("---")
             st.subheader("📊 Analysis Results")
             
-            # Decision based on higher probability
-            if prob_fake > prob_real:
+            # Check highest probability
+            if prob_0 > prob_1:
                 st.error("🔴 **Prediction:** FAKE NEWS")
-                st.metric(label="Confidence Score", value=f"{prob_fake * 100:.2f}%")
+                st.metric(label="Confidence Score", value=f"{prob_0 * 100:.2f}%")
             else:
                 st.success("🟢 **Prediction:** REAL NEWS")
-                st.metric(label="Confidence Score", value=f"{prob_real * 100:.2f}%")
+                st.metric(label="Confidence Score", value=f"{prob_1 * 100:.2f}%")
 
             # Probability Breakdown Bars
             st.write("**Prediction Probabilities:**")
-            st.progress(int(prob_real * 100), text=f"Real News Probability: {prob_real * 100:.2f}%")
-            st.progress(int(prob_fake * 100), text=f"Fake News Probability: {prob_fake * 100:.2f}%")
+            st.progress(int(prob_1 * 100), text=f"Real News Probability: {prob_1 * 100:.2f}%")
+            st.progress(int(prob_0 * 100), text=f"Fake News Probability: {prob_0 * 100:.2f}%")
 
 # Disclaimer Footer
 st.markdown("---")
