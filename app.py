@@ -1,7 +1,7 @@
 import os
 import pickle
-import streamlit as st
 import numpy as np
+import streamlit as st
 from preprocessing import clean_text
 
 # Page Configuration
@@ -34,10 +34,10 @@ st.markdown("<p class='sub-title'>NLP Project - Group 33 (Word Play)</p>", unsaf
 def load_resources():
     with open("models/tfidf_vectorizer.pkl", "rb") as f:
         vectorizer = pickle.load(f)
-
+    
     with open("models/logistic_regression.pkl", "rb") as f:
         lr_model = pickle.load(f)
-
+        
     return vectorizer, lr_model
 
 try:
@@ -46,12 +46,6 @@ try:
 except Exception as e:
     st.error("❌ Models load කරගැනීමට නොහැකි විය.")
     st.stop()
-
-# Model Selection
-model_choice = st.selectbox(
-    "🎯 භාවිතා කිරීමට අවශ්‍ය Model එක තෝරන්න:",
-    ("Logistic Regression", "Random Forest Classifier")
-)
 
 # User Input Text Area
 user_input = st.text_area(
@@ -73,16 +67,15 @@ if st.button("🔍 Analyze Authenticity"):
             text_vector = vectorizer.transform([cleaned])
             
             # 3. Model Prediction
-            selected_model = lr_model if "Logistic Regression" in model_choice else rf_model
-            prediction = selected_model.predict(text_vector)[0]
-            probabilities = selected_model.predict_proba(text_vector)[0]
+            prediction = lr_model.predict(text_vector)[0]
+            probabilities = lr_model.predict_proba(text_vector)[0]
             
             confidence = np.max(probabilities) * 100
 
             st.markdown("---")
             st.subheader("📊 Analysis Results")
             
-           # Label Output (WELFake Dataset: 0 = Fake, 1 = Real)
+            # Label Mapping (WELFake Dataset: 0 = Fake, 1 = Real)
             if prediction == 0:
                 st.error(f"🔴 **Prediction:** FAKE NEWS")
                 st.metric(label="Confidence Score", value=f"{confidence:.2f}%")
@@ -94,6 +87,7 @@ if st.button("🔍 Analyze Authenticity"):
             st.write("**Prediction Probabilities:**")
             st.progress(int(probabilities[0] * 100), text=f"Fake News Probability: {probabilities[0]*100:.2f}%")
             st.progress(int(probabilities[1] * 100), text=f"Real News Probability: {probabilities[1]*100:.2f}%")
+
 # Disclaimer Footer
 st.markdown("---")
-st.caption("⚠️ **Disclaimer:** This AI model predicts news authenticity based on linguistic patterns[cite: 1]. It does not perform real-time fact-checking[cite: 1].")
+st.caption("⚠️ **Disclaimer:** This AI model predicts news authenticity based on linguistic patterns. It does not perform real-time fact-checking.")
