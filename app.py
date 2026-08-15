@@ -85,8 +85,8 @@ if st.button("🔍 Analyze Authenticity"):
 
             # Probability Breakdown Bar
             st.write("**Prediction Probabilities:**")
-            st.progress(int(probabilities[1] * 100), text=f"Real News Probability: {probabilities[1]*100:.2f}%")
-            st.progress(int(probabilities[0] * 100), text=f"Fake News Probability: {probabilities[0]*100:.2f}%")
+            st.progress(int(probabilities[0] * 100), text=f"Real News Probability: {probabilities[1]*100:.2f}%")
+            st.progress(int(probabilities[1] * 100), text=f"Fake News Probability: {probabilities[0]*100:.2f}%")
 
 # Disclaimer Footer
 st.markdown("---")
