@@ -1,0 +1,12 @@
+# Large files and datasets
+data/
+*.csv
+
+# Saved Models
+models/
+*.pkl
+*.pt
+
+# Python cache
+__pycache__/
+*.pyc
