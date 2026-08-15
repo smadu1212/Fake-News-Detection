@@ -29,25 +29,22 @@ st.markdown("""
 st.markdown("<h1 class='main-title'>📰 Fake News Detection System</h1>", unsafe_allow_html=True)
 st.markdown("<p class='sub-title'>NLP Project - Group 33 (Word Play)</p>", unsafe_allow_html=True)
 
-# Load Saved Vectorizer and Models
+# Load Saved Vectorizer and Model
 @st.cache_resource
 def load_resources():
     with open("models/tfidf_vectorizer.pkl", "rb") as f:
         vectorizer = pickle.load(f)
-    
+
     with open("models/logistic_regression.pkl", "rb") as f:
         lr_model = pickle.load(f)
-        
-    with open("models/random_forest.pkl", "rb") as f:
-        rf_model = pickle.load(f)
-        
-    return vectorizer, lr_model, rf_model
+
+    return vectorizer, lr_model
 
 try:
-    vectorizer, lr_model, rf_model = load_resources()
-    st.success("✅ Models & Vectorizer Loaded Successfully!")
+    vectorizer, lr_model = load_resources()
+    st.success("✅ Model & Vectorizer Loaded Successfully!")
 except Exception as e:
-    st.error("❌ Models load කරගැනීමට නොහැකි විය. කරුණාකර පළමුව 'train.py' run කරන්න.")
+    st.error("❌ Models load කරගැනීමට නොහැකි විය.")
     st.stop()
 
 # Model Selection

@@ -3,9 +3,8 @@ data/
 *.csv
 
 # Saved Models
-models/
-*.pkl
-*.pt
+models/random_forest.pkl
+
 
 # Python cache
 __pycache__/
