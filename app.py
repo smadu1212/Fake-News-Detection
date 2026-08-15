@@ -70,23 +70,29 @@ if st.button("🔍 Analyze Authenticity"):
             prediction = lr_model.predict(text_vector)[0]
             probabilities = lr_model.predict_proba(text_vector)[0]
             
-            confidence = np.max(probabilities) * 100
+            # Get class indices dynamically (WELFake: 0 = Fake, 1 = Real)
+            classes = list(lr_model.classes_)
+            fake_idx = classes.index(0) if 0 in classes else 0
+            real_idx = classes.index(1) if 1 in classes else 1
+
+            fake_prob = probabilities[fake_idx]
+            real_prob = probabilities[real_idx]
 
             st.markdown("---")
             st.subheader("📊 Analysis Results")
             
-            # Label Mapping (WELFake Dataset: 1 = Real News, 0 = Fake News)
+            # Prediction Label Output
             if prediction == 1:
                 st.success(f"🟢 **Prediction:** REAL NEWS")
-                st.metric(label="Confidence Score", value=f"{confidence:.2f}%")
+                st.metric(label="Confidence Score", value=f"{real_prob * 100:.2f}%")
             else:
                 st.error(f"🔴 **Prediction:** FAKE NEWS")
-                st.metric(label="Confidence Score", value=f"{confidence:.2f}%")
+                st.metric(label="Confidence Score", value=f"{fake_prob * 100:.2f}%")
 
-            # Probability Breakdown Bar
+            # Probability Breakdown Progress Bars
             st.write("**Prediction Probabilities:**")
-            st.progress(int(probabilities[0] * 100), text=f"Real News Probability: {probabilities[1]*100:.2f}%")
-            st.progress(int(probabilities[1] * 100), text=f"Fake News Probability: {probabilities[0]*100:.2f}%")
+            st.progress(int(real_prob * 100), text=f"Real News Probability: {real_prob * 100:.2f}%")
+            st.progress(int(fake_prob * 100), text=f"Fake News Probability: {fake_prob * 100:.2f}%")
 
 # Disclaimer Footer
 st.markdown("---")
